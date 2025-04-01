@@ -1,46 +1,67 @@
-async function searchMedia(query) {
+import words from "profane-words";
+
+function containsProfanity(text) {
+  return words.includes(text.toLowerCase());
+}
+
+async function searchMedia(searchQuery) {
+  if (containsProfanity(searchQuery)) {
+    alert("Inappropriate search terms are not allowed.");
+    return;
+  }
+
   try {
-    const url = `https://api.themoviedb.org/3/search/multi?api_key=9a2954cb0084e80efa20b3729db69067&query=${encodeURIComponent(query)}`;
+    const encodedSearch = encodeURIComponent(searchQuery);
+    const url = `https://api.themoviedb.org/3/search/multi?api_key=9a2954cb0084e80efa20b3729db69067&language=en-US&query=${encodedSearch}&page=1&include_adult=false`;
+
     const response = await fetch(url);
     const data = await response.json();
-    
-    const container = document.getElementById("bigDiv");
-    container.innerHTML = "";
 
-    if (data.results.length === 0) {
-      container.innerHTML = '<p>No results found.</p>';
-      return;
+    const bigDiv = document.getElementById("bigDiv");
+    bigDiv.innerHTML = ``;
+
+    const resultsContainer = document.createElement("div");
+    resultsContainer.id = "search-results";
+    resultsContainer.className = "search-results-container";
+    bigDiv.appendChild(resultsContainer);
+
+    data.results.forEach((movie) =>
+      createAndDisplayCard(movie, resultsContainer)
+    );
+
+    if (resultsContainer.innerHTML.trim() === "") {
+      resultsContainer.innerHTML = '<p class="no-results">No results found</p>';
     }
-
-    data.results.forEach(movie => {
-      if (!movie.poster_path) return;
-      
-      const poster = `https://image.tmdb.org/t/p/w500/${movie.poster_path}`;
-      const rating = movie.vote_average ? `⭐ ${Math.round(movie.vote_average * 10) / 10}` : "";
-      const year = movie.release_date ? movie.release_date.slice(0, 4) : movie.first_air_date ? movie.first_air_date.slice(0, 4) : "N/A";
-      const link = movie.media_type === "tv" ? `embed/tv.html?id=${movie.id}` : `embed/movie.html?id=${movie.id}`;
-
-      const cardHTML = `
-        <div class="card">
-          <a href="${link}">
-            <img src="${poster}" alt="${movie.title || movie.name}">
-            <div class="rating">${rating}</div>
-            <div class="year">${year}</div>
-            <p>${movie.title || movie.name}</p>
-          </a>
-        </div>`;
-
-      container.insertAdjacentHTML("beforeend", cardHTML);
-    });
   } catch (error) {
     console.error("Error fetching search results:", error);
+    document.getElementById("bigDiv").innerHTML =
+      '<p class="error">Error fetching search results. Please try again.</p>';
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const searchBar = document.getElementById("searchbar");
-  searchBar.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") searchMedia(searchBar.value.trim());
+document.addEventListener("DOMContentLoaded", function () {
+  let cooldown = false;
+  const searchbar = document.getElementById("searchbar");
+  const cooldownNotice = document.getElementById("cooldownNotice");
+
+  searchbar.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      if (cooldown) {
+        cooldownNotice.style.display = "block";
+        return;
+      }
+
+      const searchQuery = searchbar.value.trim();
+      if (searchQuery) {
+        searchMedia(searchQuery);
+        cooldownNotice.style.display = "none";
+        cooldown = true;
+        setTimeout(() => {
+          cooldown = false;
+          cooldownNotice.style.display = "none";
+        }, 2000);
+      }
+    }
   });
 });
 
