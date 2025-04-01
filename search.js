@@ -1,7 +1,7 @@
-import words from "profane-words";
+const badWords = ["badword1", "badword2", "badword3"]; // Add more words
 
 function containsProfanity(text) {
-  return words.includes(text.toLowerCase());
+  return badWords.some(word => text.toLowerCase().includes(word));
 }
 
 async function searchMedia(searchQuery) {
