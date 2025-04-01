@@ -6,7 +6,6 @@ async function getMovie() {
     return;
   }
 
-  // Fetch movie data using TMDb API
   const url = `https://api.themoviedb.org/3/movie/${ID}?api_key=9a2954cb0084e80efa20b3729db69067&language=en-US`;
 
   try {
@@ -18,14 +17,31 @@ async function getMovie() {
     const movie = await response.json();
     document.getElementById("titletext").innerText = movie.title;
 
-    // Embed the movie using VidFast
-    const iframe = document.getElementById("iframe");
-    iframe.src = `https://vidfast.pro/movie/${ID}?autoPlay=true`;
+    loadMovie(ID);
   } catch (error) {
     console.error("Error fetching movie data:", error);
     document.getElementById("titletext").innerText = "Error loading movie.";
   }
 }
 
-document.addEventListener("DOMContentLoaded", getMovie);
+function loadMovie(ID) {
+  const source = document.getElementById("sourceSelector").value;
+  let iframeSrc;
 
+  if (source === "1") {
+    iframeSrc = `https://vidfast.pro/movie/${ID}?autoPlay=true`;
+  } else {
+    iframeSrc = `https://sudo-proxy-sable-three.vercel.app/?destination=https://vidsrc.to/embed/movie/${ID}?autoPlay=true`;
+  }
+
+  document.getElementById("iframe").src = iframeSrc;
+}
+
+document.getElementById("sourceSelector").addEventListener("change", () => {
+  const ID = new URLSearchParams(window.location.search).get("id");
+  if (ID) {
+    loadMovie(ID);
+  }
+});
+
+document.addEventListener("DOMContentLoaded", getMovie);
