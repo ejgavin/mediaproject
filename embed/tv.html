@@ -10,7 +10,7 @@
             font-family: Arial, sans-serif;
         }
         iframe {
-            width: 80%;
+            width: 100%;
             height: 500px;
             border: none;
         }
@@ -32,26 +32,32 @@
     <iframe id="iframe" allowfullscreen></iframe>
 
     <script>
-        function loadTVShow() {
+        async function getTVShow() {
             const urlParams = new URLSearchParams(window.location.search);
-            const showId = urlParams.get("id");
+            const ID = urlParams.get("id");
             const season = urlParams.get("s");
             const episode = urlParams.get("e");
+
+            if (!ID || !season || !episode) {
+                window.location.href = "/";
+                return;
+            }
+
             const sourceSelector = document.getElementById("sourceSelector");
             const iframe = document.getElementById("iframe");
 
             function updateSource() {
                 const selectedSource = sourceSelector.value;
                 iframe.src = selectedSource === "1"
-                    ? `https://vidfast.pro/tv/${showId}/${season}/${episode}?autoPlay=true`
-                    : `https://vidsrc.to/embed/tv/${showId}/${season}/${episode}`;
+                    ? `https://vidfast.pro/tv/${ID}/${season}/${episode}?autoPlay=true`
+                    : `https://sudo-proxy-sable-three.vercel.app/?destination=https://vidsrc.rip/embed/tv/${ID}/${season}/${episode}`;
             }
 
             sourceSelector.addEventListener("change", updateSource);
             updateSource();
         }
 
-        document.addEventListener("DOMContentLoaded", loadTVShow);
+        document.addEventListener("DOMContentLoaded", getTVShow);
     </script>
 
 </body>

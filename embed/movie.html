@@ -10,7 +10,7 @@
             font-family: Arial, sans-serif;
         }
         iframe {
-            width: 80%;
+            width: 100%;
             height: 500px;
             border: none;
         }
@@ -32,24 +32,28 @@
     <iframe id="iframe" allowfullscreen></iframe>
 
     <script>
-        function loadMovie() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const movieId = urlParams.get("id");
+        async function getMovie() {
+            const ID = new URLSearchParams(window.location.search).get("id");
+            if (!ID) {
+                window.location.href = "/";
+                return;
+            }
+
             const sourceSelector = document.getElementById("sourceSelector");
             const iframe = document.getElementById("iframe");
 
             function updateSource() {
                 const selectedSource = sourceSelector.value;
                 iframe.src = selectedSource === "1"
-                    ? `https://vidfast.pro/movie/${movieId}?autoPlay=true`
-                    : `https://vidsrc.to/embed/movie/${movieId}`;
+                    ? `https://vidfast.pro/movie/${ID}?autoPlay=true`
+                    : `https://sudo-proxy-sable-three.vercel.app/?destination=https://vidsrc.rip/embed/movie/${ID}`;
             }
 
             sourceSelector.addEventListener("change", updateSource);
             updateSource();
         }
 
-        document.addEventListener("DOMContentLoaded", loadMovie);
+        document.addEventListener("DOMContentLoaded", getMovie);
     </script>
 
 </body>
