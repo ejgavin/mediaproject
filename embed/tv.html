@@ -21,30 +21,18 @@
     .dropdown-container {
       display: flex;
       gap: 10px;
-      align-items: center;
-    }
-    .back-button {
-      padding: 5px 10px;
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="top-bar">
     <div class="dropdown-container">
-      <button class="back-button" onclick="goBack()">Back</button>
       <select id="seasonSelector"></select>
       <select id="episodeSelector"></select>
     </div>
     <h1 id="title">Loading TV Show...</h1>
   </div>
   <iframe id="iframe" width="100%" height="600px" allowfullscreen></iframe>
-
-  <script>
-    function goBack() {
-      window.history.back();
-    }
-  </script>
 </body>
 </html>
 

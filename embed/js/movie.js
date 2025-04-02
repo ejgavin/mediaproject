@@ -6,7 +6,6 @@ async function getMovie() {
     return;
   }
 
-  // Fetch movie data using TMDb API
   const url = `https://api.themoviedb.org/3/movie/${ID}?api_key=9a2954cb0084e80efa20b3729db69067&language=en-US`;
 
   try {
@@ -17,10 +16,7 @@ async function getMovie() {
 
     const movie = await response.json();
     document.getElementById("titletext").innerText = movie.title;
-
-    // Embed the movie using VidFast
-    const iframe = document.getElementById("iframe");
-    iframe.src = `https://vidfast.pro/movie/${ID}?autoPlay=true`;
+    document.getElementById("iframe").src = `https://vidfast.pro/movie/${ID}?autoPlay=true`;
   } catch (error) {
     console.error("Error fetching movie data:", error);
     document.getElementById("titletext").innerText = "Error loading movie.";
