@@ -31,7 +31,7 @@ function loadMovie(ID) {
   if (source === "1") {
     iframeSrc = `https://vidfast.pro/movie/${ID}?autoPlay=true`;
   } else {
-    iframeSrc = `https://sudo-proxy-sable-three.vercel.app/?destination=https://vidsrc.to/embed/movie/${ID}?autoPlay=true`;
+    iframeSrc = `https://sudo-proxy-sable-three.vercel.app/?destination=https://vidsrc.to/embed/movie/${ID}`;
   }
 
   document.getElementById("iframe").src = iframeSrc;
@@ -45,3 +45,4 @@ document.getElementById("sourceSelector").addEventListener("change", () => {
 });
 
 document.addEventListener("DOMContentLoaded", getMovie);
+

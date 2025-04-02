@@ -1,7 +1,7 @@
 async function getTVShowData() {
   const ID = new URLSearchParams(window.location.search).get("id");
   let season = new URLSearchParams(window.location.search).get("s") || 1;
-  let episode = new URLSearchParams(window.location.search).get("e") || 1;
+  let episode = new URLSearchParams(window.location.search).get("e") || null;
 
   if (!ID) {
     window.location.href = "/";
@@ -14,7 +14,7 @@ async function getTVShowData() {
     const response = await fetch(url);
     const show = await response.json();
     
-    document.getElementById("title").innerText = `${show.name} - S${season}E${episode}`;
+    document.getElementById("title").innerText = `${show.name}`;
     populateDropdowns(show.seasons, season, episode, ID);
   } catch (error) {
     console.error("Error fetching TV show data:", error);
@@ -43,15 +43,22 @@ function populateDropdowns(seasons, currentSeason, currentEpisode, ID) {
   });
 
   sourceSelector.addEventListener("change", () => {
-    changeEpisode(ID, seasonSelector.value, episodeSelector.value);
+    if (episodeSelector.value !== "choose") {
+      changeEpisode(ID, seasonSelector.value, episodeSelector.value);
+    }
   });
 
   loadEpisodes(ID, currentSeason, currentEpisode);
 }
 
-async function loadEpisodes(ID, seasonNumber, currentEpisode = 1) {
+async function loadEpisodes(ID, seasonNumber, currentEpisode = null) {
   const episodeSelector = document.getElementById("episodeSelector");
   episodeSelector.innerHTML = "";
+
+  const chooseOption = document.createElement("option");
+  chooseOption.value = "choose";
+  chooseOption.textContent = "Choose Episode";
+  episodeSelector.appendChild(chooseOption);
 
   const url = `https://api.themoviedb.org/3/tv/${ID}/season/${seasonNumber}?api_key=9a2954cb0084e80efa20b3729db69067&language=en-US`;
 
@@ -66,12 +73,12 @@ async function loadEpisodes(ID, seasonNumber, currentEpisode = 1) {
       episodeSelector.appendChild(option);
     });
 
-    episodeSelector.value = currentEpisode;
     episodeSelector.addEventListener("change", () => {
-      changeEpisode(ID, seasonNumber, episodeSelector.value);
+      if (episodeSelector.value !== "choose") {
+        changeEpisode(ID, seasonNumber, episodeSelector.value);
+      }
     });
 
-    changeEpisode(ID, seasonNumber, currentEpisode);
   } catch (error) {
     console.error("Error fetching episodes:", error);
   }
@@ -84,7 +91,7 @@ function changeEpisode(ID, season, episode) {
   if (source === "1") {
     iframeSrc = `https://vidfast.pro/tv/${ID}/${season}/${episode}?autoPlay=true`;
   } else {
-    iframeSrc = `https://sudo-proxy-sable-three.vercel.app/?destination=https://vidsrc.to/embed/tv/${ID}/${season}/${episode}?autoPlay=true`;
+    iframeSrc = `https://sudo-proxy-sable-three.vercel.app/?destination=https://vidsrc.to/embed/tv/${ID}/${season}/${episode}`;
   }
 
   document.getElementById("title").innerText = `S${season}E${episode}`;
@@ -92,3 +99,4 @@ function changeEpisode(ID, season, episode) {
 }
 
 document.addEventListener("DOMContentLoaded", getTVShowData);
+
