@@ -12,15 +12,26 @@
       justify-content: space-between;
       align-items: center;
       padding: 10px;
+      background-color: #1f1f1f;
     }
     #title {
       margin-left: auto;
       font-size: 20px;
       font-weight: bold;
+      color: white;
     }
     .dropdown-container {
       display: flex;
       gap: 10px;
+    }
+    .player-container {
+      background-color: #121212;
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
     }
   </style>
 </head>
@@ -32,7 +43,8 @@
     </div>
     <h1 id="title">Loading TV Show...</h1>
   </div>
-  <iframe id="iframe" width="100%" height="600px" allowfullscreen></iframe>
+  <div class="player-container">
+    <iframe id="iframe" width="100%" height="600px" allowfullscreen></iframe>
+  </div>
 </body>
 </html>
-
