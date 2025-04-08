@@ -16,12 +16,30 @@ async function getMovie() {
 
     const movie = await response.json();
     document.getElementById("titletext").innerText = movie.title;
-    document.getElementById("iframe").src = `https://vidfast.pro/movie/${ID}?autoPlay=true`;
+    updateIframe(ID);
+
   } catch (error) {
     console.error("Error fetching movie data:", error);
     document.getElementById("titletext").innerText = "Error loading movie.";
   }
 }
+
+function updateIframe(ID) {
+  const source = document.getElementById("sourceSelector").value;
+  const iframe = document.getElementById("iframe");
+
+  if (source === "1") {
+    iframe.src = `https://vidfast.pro/movie/${ID}?autoPlay=true`;
+  } else if (source === "2") {
+    iframe.src = `https://vidsrc.cc/v2/embed/movie/${ID}?autoPlay=true`;
+  }
+}
+
+// Event listener for the source dropdown to update iframe when the source changes
+document.getElementById("sourceSelector").addEventListener("change", function() {
+  const ID = new URLSearchParams(window.location.search).get("id");
+  updateIframe(ID);
+});
 
 document.addEventListener("DOMContentLoaded", getMovie);
 

@@ -16,7 +16,7 @@ async function getTVShowData() {
     const show = await response.json();
 
     document.getElementById("title").innerText = `${show.name} - S${season}E${episode}`;
-    document.getElementById("iframe").src = `https://vidfast.pro/tv/${ID}/${season}/${episode}?autoPlay=true`;
+    updateIframe(ID, season, episode);
 
     populateDropdowns(show.seasons, season, episode, ID);
   } catch (error) {
@@ -71,8 +71,28 @@ async function loadEpisodes(ID, seasonNumber, currentEpisode = 1) {
 
 function changeEpisode(ID, season, episode) {
   document.getElementById("title").innerText = `S${season}E${episode}`;
-  document.getElementById("iframe").src = `https://vidfast.pro/tv/${ID}/${season}/${episode}?autoPlay=true`;
+  updateIframe(ID, season, episode);
 }
+
+function updateIframe(ID, season, episode) {
+  const source = document.getElementById("sourceSelector").value;
+  const iframe = document.getElementById("iframe");
+
+  if (source === "1") {
+    iframe.src = `https://vidfast.pro/tv/${ID}/${season}/${episode}?autoPlay=true`;
+  } else if (source === "2") {
+    iframe.src = `https://vidsrc.cc/v2/embed/tv/${ID}/${season}/${episode}?autoPlay=true`;
+  }
+}
+
+// Event listener for the source dropdown to update iframe when the source changes
+document.getElementById("sourceSelector").addEventListener("change", function() {
+  const params = new URLSearchParams(window.location.search);
+  const ID = params.get("id");
+  const season = params.get("s") || 1;
+  const episode = params.get("e") || 1;
+  updateIframe(ID, season, episode);
+});
 
 document.addEventListener("DOMContentLoaded", getTVShowData);
 

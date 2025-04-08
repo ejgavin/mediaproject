@@ -23,6 +23,17 @@
     .dropdown-container {
       display: flex;
       gap: 10px;
+      align-items: center;
+    }
+    .dropdown-container select {
+      padding: 5px;
+    }
+    .back-button {
+      background-color: #1f1f1f;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 5px;
+      text-decoration: none;
     }
     .player-container {
       background-color: #121212;
@@ -37,9 +48,14 @@
 </head>
 <body>
   <div class="top-bar">
+    <a href="/" class="back-button">Back</a>
     <div class="dropdown-container">
       <select id="seasonSelector"></select>
       <select id="episodeSelector"></select>
+      <select id="sourceSelector">
+        <option value="1">Source 1</option>
+        <option value="2">Source 2</option>
+      </select>
     </div>
     <h1 id="title">Loading TV Show...</h1>
   </div>
@@ -48,3 +64,4 @@
   </div>
 </body>
 </html>
+
