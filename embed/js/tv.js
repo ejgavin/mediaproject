@@ -85,7 +85,7 @@ function updateIframe(ID, season, episode) {
   } else if (source === "3") {
       iframe.src = `https://vidlink.pro/tv/${ID}/${season}/${episode}?autoPlay=true`;
   } else if (source === "4") {
-       iframe.src = `https://player.videasy.net/tv/${ID}/${season}/${episode}?autoPlay=true`;
+       iframe.src = `https://player.videasy.net/tv/${ID}/${season}/${episode}?autoPlay=true&redirectstop=true`;
   }
 }
 
