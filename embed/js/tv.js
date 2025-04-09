@@ -82,6 +82,8 @@ function updateIframe(ID, season, episode) {
     iframe.src = `https://vidfast.pro/tv/${ID}/${season}/${episode}?autoPlay=true`;
   } else if (source === "2") {
     iframe.src = `https://vidsrc.cc/v2/embed/tv/${ID}/${season}/${episode}?autoPlay=true`;
+  } else if (source === "3") {
+      iframe.src = `https://vidlink.pro/tv/${ID}/${season}/${episode}?autoPlay=true`;
   }
 }
 
