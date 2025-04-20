@@ -1,5 +1,6 @@
-async function getMovie() {
-  const ID = new URLSearchParams(window.location.search).get("id");
+async function getMovieData() {
+  const params = new URLSearchParams(window.location.search);
+  const ID = params.get("id");
 
   if (!ID) {
     window.location.href = "/";
@@ -10,13 +11,10 @@ async function getMovie() {
 
   try {
     const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-
     const movie = await response.json();
-    document.getElementById("titletext").innerText = movie.title;
-    updateIframe(ID);
+
+    window.currentMovie = movie.title;
+    updateTitleAndIframe(ID);
 
   } catch (error) {
     console.error("Error fetching movie data:", error);
@@ -24,22 +22,31 @@ async function getMovie() {
   }
 }
 
-function updateIframe(ID) {
+function updateTitleAndIframe(ID) {
   const source = document.getElementById("sourceSelector").value;
-  const iframe = document.getElementById("iframe");
+  document.getElementById("titletext").innerText = window.currentMovie;
 
-  if (source === "1") {
-    iframe.src = `https://vidfast.pro/movie/${ID}?autoPlay=true`;
-  } else if (source === "2") {
-    iframe.src = `https://vidsrc.cc/v2/embed/movie/${ID}?autoPlay=true`;
+  let src = "";
+  switch (source) {
+    case "1":
+      src = `https://vidfast.pro/movie/${ID}?autoPlay=true`;
+      break;
+    case "2":
+      src = `https://player.videasy.net/movie/${ID}?autoPlay=true&episodeSelector=false`;
+      break;
+    case "3":
+      src = `https://111movies.com/movie/${ID}?autoPlay=true`;
+      break;
   }
+
+  document.getElementById("iframe").src = src;
 }
 
-// Event listener for the source dropdown to update iframe when the source changes
-document.getElementById("sourceSelector").addEventListener("change", function() {
-  const ID = new URLSearchParams(window.location.search).get("id");
-  updateIframe(ID);
+document.getElementById("sourceSelector").addEventListener("change", () => {
+  const params = new URLSearchParams(window.location.search);
+  const ID = params.get("id");
+  updateTitleAndIframe(ID);
 });
 
-document.addEventListener("DOMContentLoaded", getMovie);
+document.addEventListener("DOMContentLoaded", getMovieData);
 

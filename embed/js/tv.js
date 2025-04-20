@@ -15,8 +15,8 @@ async function getTVShowData() {
     const response = await fetch(url);
     const show = await response.json();
 
-    document.getElementById("title").innerText = `${show.name} - S${season}E${episode}`;
-    updateIframe(ID, season, episode);
+    window.currentShow = show.name;
+    updateTitleAndIframe(ID, season, episode);
 
     populateDropdowns(show.seasons, season, episode, ID);
   } catch (error) {
@@ -40,7 +40,11 @@ function populateDropdowns(seasons, currentSeason, currentEpisode, ID) {
   });
 
   seasonSelector.value = currentSeason;
-  seasonSelector.addEventListener("change", () => loadEpisodes(ID, seasonSelector.value));
+  seasonSelector.addEventListener("change", () => {
+    episodeSelector.innerHTML = "";
+    document.getElementById("title").innerText = "Loading episodes...";
+    loadEpisodes(ID, seasonSelector.value);
+  });
 
   loadEpisodes(ID, currentSeason, currentEpisode);
 }
@@ -63,39 +67,46 @@ async function loadEpisodes(ID, seasonNumber, currentEpisode = 1) {
     });
 
     episodeSelector.value = currentEpisode;
-    episodeSelector.addEventListener("change", () => changeEpisode(ID, seasonNumber, episodeSelector.value));
+    episodeSelector.addEventListener("change", () =>
+      changeEpisode(ID, seasonNumber, episodeSelector.value)
+    );
+
+    changeEpisode(ID, seasonNumber, currentEpisode);
   } catch (error) {
     console.error("Error fetching episodes:", error);
   }
 }
 
 function changeEpisode(ID, season, episode) {
-  document.getElementById("title").innerText = `S${season}E${episode}`;
-  updateIframe(ID, season, episode);
+  updateTitleAndIframe(ID, season, episode);
 }
 
-function updateIframe(ID, season, episode) {
+function updateTitleAndIframe(ID, season, episode) {
   const source = document.getElementById("sourceSelector").value;
-  const iframe = document.getElementById("iframe");
+  document.getElementById("title").innerText = `${window.currentShow} - S${season}E${episode}`;
 
-  if (source === "1") {
-    iframe.src = `https://vidfast.pro/tv/${ID}/${season}/${episode}?autoPlay=true`;
-  } else if (source === "2") {
-    iframe.src = `https://vidsrc.cc/v2/embed/tv/${ID}/${season}/${episode}?autoPlay=true`;
-  } else if (source === "3") {
-      iframe.src = `https://vidlink.pro/tv/${ID}/${season}/${episode}?autoPlay=true`;
-  } else if (source === "4") {
-       iframe.src = `https://player.videasy.net/tv/${ID}/${season}/${episode}?autoPlay=true&redirectstop=true`;
+  let src = "";
+  switch (source) {
+    case "1":
+      src = `https://vidfast.pro/tv/${ID}/${season}/${episode}?autoPlay=true`;
+      break;
+    case "2":
+      src = `https://player.videasy.net/tv/${ID}/${season}/${episode}?autoPlay=true&episodeSelector=false`;
+      break;
+    case "3":
+      src = `https://111movies.com/tv/${ID}/${season}/${episode}?autoPlay=true`;
+      break;
   }
+
+  document.getElementById("iframe").src = src;
 }
 
-// Event listener for the source dropdown to update iframe when the source changes
-document.getElementById("sourceSelector").addEventListener("change", function() {
+document.getElementById("sourceSelector").addEventListener("change", () => {
   const params = new URLSearchParams(window.location.search);
   const ID = params.get("id");
-  const season = params.get("s") || 1;
-  const episode = params.get("e") || 1;
-  updateIframe(ID, season, episode);
+  const season = document.getElementById("seasonSelector").value;
+  const episode = document.getElementById("episodeSelector").value;
+  updateTitleAndIframe(ID, season, episode);
 });
 
 document.addEventListener("DOMContentLoaded", getTVShowData);
